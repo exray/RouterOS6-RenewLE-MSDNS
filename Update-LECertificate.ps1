@@ -6,10 +6,20 @@ foreach ($Function in $FunctionsList) {
     . ($FunctionsPath + $Function)
 }
 
-$Cred = Import-Clixml ../myCred__.xml
+
 $FQDN = $args[0]
 $SshPort = $args[1]
 $DnsServer = "machine-a-dc.auror.local"
+
+try {
+    $Cred = Import-Clixml ../myCred__.xml    
+}
+catch {
+    Write-Host "Не вижу сохранённых данных для подключения к $DnsServer. Укажи данные для подключения:"
+    $Cred = Get-Credential
+    $Cred | Export-Clixml ../myCred__.xml
+    $Cred = Import-Clixml ../myCred__.xml    
+}
 
 # Инициализируем наше устройство, чтобы им можно было управлять
 Write-Host -ForegroundColor Yellow "[0/5] Инициализирую устройство"
