@@ -33,7 +33,7 @@ $Random = Get-Random -Minimum 1 -Maximum 100
 $TxtRecordValue = "testvalue-$Random"
 # /Для тестов
 
-Write-Host -ForegroundColor Yellow "[3/5] Проверяю TXT-запись _acme-challenge.$SubDomain.$ZoneName на сервере $DNSServer"
+Write-Host -ForegroundColor Yellow "[3/5] Проверяю TXT-запись"
 Set-DnsRecord -DnsServerAddress $DnsServer -FQDN $FQDN -Credential $Cred -TxtRecordValue $TxtRecordValue
 
 $SleepTimer = 10
