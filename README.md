@@ -1,3 +1,9 @@
+Обновляет сертификат LetsEncrypt для использования SSTP на устройствах Mikrotik.
+
+Проект является обёрткой над https://github.com/danb35/letsencrypt-routeros
+
+Проект появился потому что очевидный вариант с [acme.sh](https://github.com/acmesh-official/acme.sh) не заработал.
+
 ## Основной скрипт Update-LECertificate.ps1
 
 ```bash
