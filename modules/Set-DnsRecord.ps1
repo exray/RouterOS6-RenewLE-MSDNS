@@ -17,7 +17,7 @@ function Set-DnsRecord {
 
     Invoke-Command -ComputerName $DnsServerAddress -Credential $Credential -Authentication Negotiate -ScriptBlock {
         try {
-            $Record = Get-DnsServerResourceRecord -ZoneName $using:ZoneName -Name "_acme-challenge.$using:SubDomain" -ErrorAction Stop
+            $Record = Get-DnsServerResourceRecord -ZoneName $using:ZoneName -Name "_acme-challenge.$using:SubDomain" -ErrorAction SilentlyContinue
             if ($Record) {
                 $Record | Remove-DnsServerResourceRecord -ZoneName $using:ZoneName -Force -ErrorAction Stop
                 Write-Output "Старая TXT-запись _acme-challenge.$using:SubDomain.$using:ZoneName была успешно удалена."
