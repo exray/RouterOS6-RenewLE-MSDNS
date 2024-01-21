@@ -30,18 +30,12 @@ Write-Host -ForegroundColor Yellow "[0/5] Инициализирую устро�
 
 # Читаем ТХТ-запись, которую нужно указать на DNS-сервере
 Write-Host -ForegroundColor Yellow "[1/5] Запрашиваю необходимую TXT-запись"
-$TxtRecord=$(Get-CertbotTxtRecord $FQDN)
-Write-Host -ForegroundColor Yellow "Необходимая запись: $TxtRecord"
+$TxtRecordValue=$(Get-CertbotTxtRecord $FQDN)
+Write-Host -ForegroundColor Yellow "Необходимая запись: $TxtRecordValue"
 
 # Генерируем конфиг
 Write-Host -ForegroundColor Yellow "[2/5] Генерирую конфиг"
 New-CertbotConfig -RouterOsHost $FQDN -RouterOsSshPort $SshPort 
-
-# Обновляем ТХТ-запись на DNS-сервере
-# Для тестов
-$Random = Get-Random -Minimum 1 -Maximum 100
-$TxtRecordValue = "testvalue-$Random"
-# /Для тестов
 
 Write-Host -ForegroundColor Yellow "[3/5] Проверяю TXT-запись"
 Set-DnsRecord -DnsServerAddress $DnsServer -FQDN $FQDN -Credential $Cred -TxtRecordValue $TxtRecordValue
