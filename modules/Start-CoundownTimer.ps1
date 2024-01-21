@@ -32,5 +32,3 @@ function Start-CountdownTimer {
     }
     Write-Host ""
 }
-
-Start-CountdownTimer -Minutes 5
