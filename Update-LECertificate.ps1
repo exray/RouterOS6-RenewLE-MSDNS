@@ -31,14 +31,27 @@ Write-Host -ForegroundColor Yellow "[0/5] Инициализирую устро�
 # Читаем ТХТ-запись, которую нужно указать на DNS-сервере
 Write-Host -ForegroundColor Yellow "[1/5] Запрашиваю необходимую TXT-запись"
 $TxtRecordValue=$(Get-CertbotTxtRecord $FQDN)
+Write-Host "Получил значение $TxtRecordValue, LASTEXITCODE: $LASTEXITCODE"
+if (!$?) {
+    Write-Host "Не смог получить необходимую TXT-запись" -ForegroundColor Red
+    Break
+}
 Write-Host -ForegroundColor Yellow "Необходимая запись: $TxtRecordValue"
 
 # Генерируем конфиг
 Write-Host -ForegroundColor Yellow "[2/5] Генерирую конфиг"
-New-CertbotConfig -RouterOsHost $FQDN -RouterOsSshPort $SshPort 
+New-CertbotConfig -RouterOsHost $FQDN -RouterOsSshPort $SshPort
 
 Write-Host -ForegroundColor Yellow "[3/5] Проверяю TXT-запись"
-Set-DnsRecord -DnsServerAddress $DnsServer -FQDN $FQDN -Credential $Cred -TxtRecordValue $TxtRecordValue
+try {
+    Set-DnsRecord -DnsServerAddress $DnsServer -FQDN $FQDN -Credential $Cred -TxtRecordValue $TxtRecordValue -ErrorAction Stop
+} catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
+    Write-Host "Не удалось подключиться к $DnsServer"
+    Break
+} catch [Exception] {
+    Write-Host "Произошла другая ошибка типа $($_.Exception.GetType().FullName): $_"
+    Break
+}
 
 $SleepTimer = 10
 Start-CountdownTimer -Minutes $SleepTimer

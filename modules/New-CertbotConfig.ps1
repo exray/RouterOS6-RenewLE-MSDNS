@@ -15,5 +15,9 @@ ROUTEROS_PRIVATE_KEY=$RouterOSPrivateKey
 DOMAIN=$RouterOsHost
 "@
     
-    $ConfigContent | Out-File -FilePath $ConfigPath -Encoding UTF8
+    try {
+        $ConfigContent | Out-File -FilePath $ConfigPath -Encoding UTF8 -ErrorAction Stop
+    } catch [System.UnauthorizedAccessException]{
+        Write-Host "Нет прав на запись файла $ConfigPath в указанный каталог"
+    }
 }

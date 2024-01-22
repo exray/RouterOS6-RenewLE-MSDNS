@@ -23,7 +23,9 @@ function Get-CertbotTxtRecord {
     }
 
     # Сохраняем данные в файл
-    $txtRecord.Trim() | Set-Content -Path $CertbotTxtRecordFile
+    if ($txtRecord) {
+        $txtRecord.Trim() | Set-Content -Path $CertbotTxtRecordFile
+    }
 
     $result = Get-Content $CertbotTxtRecordFile
     
