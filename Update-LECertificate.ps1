@@ -22,47 +22,52 @@ catch {
 }
 
 # Инициализируем наше устройство, чтобы им можно было управлять
-Write-Host -ForegroundColor Yellow "[0/5] Инициализирую устройство"
+Write-Host "[0/5] Инициализирую устройство" -ForegroundColor Yellow
 
 # TODO! Если устройство ещё не настроено для работы, раскомментируй следующую строку
 # Set-CertbotInitialSetup -SshUser cits2 -SshHost $FQDN -SshPort $SshPort
 # Write-Progress -Activity "Инициализировал устройство" -PercentComplete 20
 
 # Читаем ТХТ-запись, которую нужно указать на DNS-сервере
-Write-Host -ForegroundColor Yellow "[1/5] Запрашиваю необходимую TXT-запись"
+Write-Host "[1/5] Запрашиваю необходимую TXT-запись. " -ForegroundColor Yellow -NoNewline
 $TxtRecordValue=$(Get-CertbotTxtRecord $FQDN)
-Write-Host "Получил значение $TxtRecordValue, LASTEXITCODE: $LASTEXITCODE"
-if (!$?) {
-    Write-Host "Не смог получить необходимую TXT-запись" -ForegroundColor Red
+if (!$TxtRecordValue) {
+    Write-Host "Не смог запросить необходимую TXT-запись." -ForegroundColor Red
     Break
+} else {
+    Write-Host "Необходимая запись: $TxtRecordValue" -ForegroundColor Green
 }
-Write-Host -ForegroundColor Yellow "Необходимая запись: $TxtRecordValue"
 
 # Генерируем конфиг
-Write-Host -ForegroundColor Yellow "[2/5] Генерирую конфиг"
+Write-Host "[2/5] Генерирую конфиг для подключения к устройству. " -ForegroundColor Yellow -NoNewline
 New-CertbotConfig -RouterOsHost $FQDN -RouterOsSshPort $SshPort
+if (!$?) {
+    Write-Host "Возникла проблема при генерации конфига." -ForegroundColor Red
+} else {
+    Write-Host "Конфиг сгенерирован." -ForegroundColor Green
+}
 
-Write-Host -ForegroundColor Yellow "[3/5] Проверяю TXT-запись"
+Write-Host "[3/5] Проверяю TXT-запись. " -ForegroundColor Yellow -NoNewline
 try {
     Set-DnsRecord -DnsServerAddress $DnsServer -FQDN $FQDN -Credential $Cred -TxtRecordValue $TxtRecordValue -ErrorAction Stop
 } catch [System.Management.Automation.Remoting.PSRemotingTransportException] {
-    Write-Host "Не удалось подключиться к $DnsServer"
+    Write-Host "Не удалось подключиться к $DnsServer" -ForegroundColor Red
     Break
 } catch [Exception] {
-    Write-Host "Произошла другая ошибка типа $($_.Exception.GetType().FullName): $_"
+    Write-Host "Произошла другая ошибка типа $($_.Exception.GetType().FullName): $_" -ForegroundColor Red
     Break
 }
 
 $SleepTimer = 10
+Write-Host "Беру паузу в $($SleepTimer) минут для применения изменений в DNS" -ForegroundColor Blue
 Start-CountdownTimer -Minutes $SleepTimer
-Write-Output "Беру паузу в $($SleepTimer) минут для применения изменений в DNS."
 
-Write-Host -ForegroundColor Yellow "[4/5] Генерирую новый сертификат и заменяю его на $FQDN"
+Write-Host "[4/5] Генерирую новый сертификат и заменяю его на устройстве $FQDN" -ForegroundColor Yellow
 certbot certonly --non-interactive --agree-tos --preferred-challenges=dns --manual -d $FQDN --manual-public-ip-logging-ok --manual-auth-hook "echo 'Skipping manual-auth-hook'" --post-hook "/opt/letsencrypt-routeros/letsencrypt-routeros.sh -c /tmp/routeros.settings"
 
 # Если не сработала прошлая команда, есть чудесный костыль ниже
 # /opt/letsencrypt-routeros/letsencrypt-routeros.sh -c /tmp/routeros.settings 
-Write-Host -ForegroundColor Yellow "[5/5] Удаляю временный конфиг"
+Write-Host "[5/5] Удаляю временный конфиг" -ForegroundColor Yellow
 Remove-Item /tmp/routeros.settings
 
 # TODO Разберись, как узнать, какие даты у сертификатов: openssl x509 -enddate -noout -in /etc/letsencrypt/live/vpn1.mirproduktov.cits.ru/cert.pem чтобы форсированно запустить обновление нужных сертификатов
