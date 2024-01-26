@@ -27,11 +27,15 @@ function Get-CertbotTxtRecord {
         $txtRecord.Trim() | Set-Content -Path $CertbotTxtRecordFile
     }
 
-    $result = Get-Content $CertbotTxtRecordFile
+    try {
+        $result = Get-Content $CertbotTxtRecordFile -ErrorAction Stop
+    } catch [System.Management.Automation.ItemNotFoundException]{
+        Write-Debug "Файл $CertbotTxtRecordFile не найден"
+    }
     
     # Чистим временные файлы
-    Remove-Item $CertbotOutputFile
-    Remove-Item $CertbotTxtRecordFile
+    Remove-Item $CertbotOutputFile -ErrorAction SilentlyContinue
+    Remove-Item $CertbotTxtRecordFile -ErrorAction SilentlyContinue
 
     return $result
 }
