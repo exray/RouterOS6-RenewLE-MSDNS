@@ -18,6 +18,6 @@ DOMAIN=$RouterOsHost
     try {
         $ConfigContent | Out-File -FilePath $ConfigPath -Encoding UTF8 -ErrorAction Stop
     } catch [System.UnauthorizedAccessException]{
-        Write-Host "Нет прав на запись файла $ConfigPath в указанный каталог"
+        Write-Debug "Нет прав на запись файла $ConfigPath в указанный каталог"
     }
 }
