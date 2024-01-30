@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  ros6-le-msdns:
+    image: exray88/routeros6-letsencypt-msdns-mscentos
+    network_mode: bridge
+    container_name: ros6-le-msdns
+    # restart: always
+    tty: true
