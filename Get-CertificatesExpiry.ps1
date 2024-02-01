@@ -17,7 +17,7 @@ function Get-CertificateExpirationStatus {
     $format = "MMM d HH:mm:ss yyyy zzz"
     $culture = [System.Globalization.CultureInfo]::InvariantCulture
     $endDate = [DateTime]::ParseExact($endDate, $format, $culture)
-    $endDateRaw = $endDate.ToString("MM/dd/yyyy HH:mm:ss")
+    $endDateRaw = Get-Date $endDate -Format (Get-culture).DateTimeFormat.UniversalSortableDateTimePattern
     $endDate = $endDate.ToString("dd.MM.yyyy")
     $daysUntilExpiration = ((Get-Date $endDateRaw) - (Get-Date)).Days
 
@@ -74,3 +74,5 @@ else {
         }
     }
 }
+
+Get-CertificateExpirationStatus
