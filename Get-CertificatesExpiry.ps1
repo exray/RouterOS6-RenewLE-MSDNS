@@ -45,17 +45,13 @@ function Get-Domains-For-Zabbix {
     return $result
 }
 
-$certDirectories = Get-ChildItem "/etc/letsencrypt/live" -Name
+$certDirectories = Get-ChildItem "/etc/letsencrypt/live" -Directory -Name
 
 if ($argument -eq "list-domains-for-zabbix") {
     $result = Get-Domains-For-Zabbix
     Write-Output ($result | ConvertTo-Json -Depth 2 -Compress)
 }
 else {
-    $result = @{
-        data = @()
-    }
-
     foreach ($directory in $certDirectories) {
         $certPath = Join-Path "/etc/letsencrypt/live" $directory "cert.pem"
 
@@ -74,5 +70,3 @@ else {
         }
     }
 }
-
-Get-CertificateExpirationStatus
