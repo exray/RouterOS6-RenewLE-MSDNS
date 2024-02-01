@@ -1,3 +1,16 @@
+param(
+    [Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'Positional')]
+    [string]$FQDN,
+
+    [Parameter(Position = 1, Mandatory = $true, ParameterSetName = 'Positional')]
+    [string]$SshPort,
+    
+    [Parameter(Position = 2, Mandatory = $true, ParameterSetName = 'Positional')]
+    [string]$DnsServer
+)
+
+$DebugPreference = 'Continue'
+
 # Подключаем все дополнительные функции, которые лежат в каталоге modules
 $FunctionsPath = $PSScriptRoot + "/modules/"
 $FunctionsList = Get-ChildItem -Path $FunctionsPath -Name
@@ -5,11 +18,6 @@ $FunctionsList = Get-ChildItem -Path $FunctionsPath -Name
 foreach ($Function in $FunctionsList) {
     . ($FunctionsPath + $Function)
 }
-
-
-$FQDN = $args[0]
-$SshPort = $args[1]
-$DnsServer = "machine-a-dc.auror.local"
 
 try {
     $Cred = Import-Clixml ../myCred__.xml    
@@ -54,7 +62,7 @@ try {
     Write-Host "Не удалось подключиться к $DnsServer" -ForegroundColor Red
     Break
 } catch [Exception] {
-    Write-Host "Произошла другая ошибка типа $($_.Exception.GetType().FullName): $_" -ForegroundColor Red
+    Write-Host "Произошла ошибка типа $($_.Exception.GetType().FullName): $_" -ForegroundColor Red
     Break
 }
 
