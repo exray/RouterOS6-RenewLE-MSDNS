@@ -11,7 +11,9 @@ RUN yum install -y python3 \
     compat-openssl10 \
     libicu \
     git \
-    gssntlmssp
+    gssntlmssp \
+    docker-ce \
+    docker-compose \
 
 # Install PSWSMan module
 RUN pwsh -c "Install-Module -Name PSWSMan -Scope AllUsers -Force; Install-WSMan"

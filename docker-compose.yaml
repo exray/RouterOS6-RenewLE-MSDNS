@@ -1,9 +1,12 @@
 version: '3'
 
 services:
-  ros6-le-msdns:
+  scheduler:
     image: exray88/routeros6-letsencypt-msdns-mscentos
     network_mode: bridge
-    container_name: ros6-le-msdns
-    # restart: always
-    tty: true
+    restart: unless-stopped
+  restarter:
+    image: docker:cli
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    command: ["/bin/sh", "-c", "while true; do sleep 86400; docker restart routeros6-renewle-msdns-scheduler-1; done"]
+    restart: unless-stopped
