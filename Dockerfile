@@ -24,4 +24,4 @@ RUN git clone https://github.com/exray/RouterOS6-RenewLE-MSDNS.git /opt/RouterOS
 
 COPY Scheduler.ps1 /opt/RouterOS6-RenewLE-MSDNS
 
-CMD ["pwsh", "/opt/RouterOS6-RenewLE-MSDNS/test_scheduler.ps1"]
+CMD ["pwsh", "/opt/RouterOS6-RenewLE-MSDNS/Scheduler.ps1"]
