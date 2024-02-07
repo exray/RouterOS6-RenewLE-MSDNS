@@ -18,5 +18,8 @@ RUN pwsh -c "Install-Module -Name PSWSMan -Scope AllUsers -Force; Install-WSMan"
 
 # Clone letsencrypt-routeros repository
 RUN git clone https://github.com/danb35/letsencrypt-routeros.git /opt/letsencrypt-routeros
+RUN git clone https://github.com/exray/RouterOS6-RenewLE-MSDNS.git /opt/RouterOS6-RenewLE-MSDNS
 
-CMD ["pwsh"]
+COPY Scheduler.ps1 /opt/RouterOS6-RenewLE-MSDNS
+
+CMD ["pwsh", "/opt/RouterOS6-RenewLE-MSDNS/test_scheduler.ps1"]
