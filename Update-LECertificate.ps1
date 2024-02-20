@@ -6,7 +6,10 @@ param(
     [string]$SshPort,
     
     [Parameter(Position = 2, Mandatory = $true, ParameterSetName = 'Positional')]
-    [string]$DnsServer
+    [string]$DnsServer,
+
+    [Parameter(Position = 3, Mandatory = $true, ParameterSetName = 'Positional')]
+    [string]$EmailAddress
 )
 
 $DebugPreference = 'Continue'
@@ -73,10 +76,9 @@ Write-Host "Беру паузу в $($SleepTimer) минут для примен
 Start-CountdownTimer -Minutes $SleepTimer
 
 # TODO 1. Нужно сделать проверку на отсутствие приватного ключа
-# TODO 2. Нужно добавить ключ --email email@address.com для certbot
 
 Write-Host "[4/5] Генерирую новый сертификат и заменяю его на устройстве $FQDN. " -ForegroundColor Yellow
-certbot certonly --non-interactive --agree-tos --preferred-challenges=dns --manual -d $FQDN --manual-public-ip-logging-ok --manual-auth-hook "echo 'Skipping manual-auth-hook'" --post-hook "/opt/letsencrypt-routeros/letsencrypt-routeros.sh -c /tmp/routeros.settings"
+certbot certonly --non-interactive --agree-tos --email $EmailAddress --preferred-challenges=dns --manual -d $FQDN --manual-public-ip-logging-ok --manual-auth-hook "echo 'Skipping manual-auth-hook'" --post-hook "/opt/letsencrypt-routeros/letsencrypt-routeros.sh -c /tmp/routeros.settings"
 if (Get-ErrorPresence) {
     Write-Host "Не удалось установить сертификат на устройство $FQDN." -ForegroundColor Red
     return
