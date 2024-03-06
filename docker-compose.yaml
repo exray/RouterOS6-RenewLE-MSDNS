@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  scheduler:
+  worker:
     image: exray88/routeros6-letsencypt-msdns-mscentos
     network_mode: bridge
     restart: unless-stopped
   restarter:
     image: docker:cli
     volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
-    command: ["/bin/sh", "-c", "while true; do sleep 86400; docker restart routeros6-renewle-msdns-scheduler-1; done"]
+    command: ["/bin/sh", "-c", "while true; do sleep 86400; docker restart routeros6-renewle-msdns-worker-1; done"]
     restart: unless-stopped
