@@ -10,7 +10,7 @@ function Get-CertbotTxtRecord {
 
     Start-Job -ScriptBlock {
         # У certbot можно использовать параметр --dry-run для тестов
-        certbot certonly -v --preferred-challenges=dns --manual --manual-public-ip-logging-ok -d $using:FQDN --dry-run > $using:CertbotOutputFile 2>&1
+        certbot certonly -v --preferred-challenges=dns --manual --manual-public-ip-logging-ok -d $using:FQDN > $using:CertbotOutputFile 2>&1
     } | Out-Null
     
 
