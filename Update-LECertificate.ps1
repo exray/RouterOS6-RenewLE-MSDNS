@@ -45,7 +45,6 @@ Write-Host "[0/5] Инициализирую устройство. " -Foreground
 
 # TODO! Если устройство ещё не настроено для работы, раскомментируй следующую строку
 # Set-CertbotInitialSetup -SshUser cits2 -SshHost $FQDN -SshPort $SshPort
-# Write-Progress -Activity "Инициализировал устройство" -PercentComplete 20
 
 # Читаем ТХТ-запись, которую нужно указать на DNS-сервере
 Write-Host "[1/5] Запрашиваю необходимую TXT-запись. " -ForegroundColor Yellow -NoNewline
@@ -94,5 +93,3 @@ if (Get-ErrorPresence) {
 # /opt/letsencrypt-routeros/letsencrypt-routeros.sh -c /tmp/routeros.settings 
 Write-Host "[5/5] Удаляю временный конфиг" -ForegroundColor Yellow
 Remove-Item /tmp/routeros.settings
-
-# TODO Разберись, как хранить данные для подключения к хостам: адрес (уже передаётся через консоль) и порт. Возможно передавать через аргументы командной строки
