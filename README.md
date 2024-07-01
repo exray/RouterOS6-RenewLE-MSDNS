@@ -7,8 +7,8 @@
 ## Основной скрипт Update-LECertificate.ps1
 
 ```bash
-# pwsh ./Modify-DnsTxtRecord.ps1 <FQDN-имя> <SSH-порт>
-pwsh ./Modify-DnsTxtRecord.ps1 vpn1.domain.com 22
+# pwsh ./Update-LECertificate.ps1 -FQDN <vpn1.domain.com> -SshPort <22> -DnsServer <MS-DNS-Server> -EmailAddress <e@mail.com>
+pwsh ./Modify-DnsTxtRecord.ps1 vpn1.domain.com 22 my.microsoft.dns.ip e@mail.com
 ```
 
 Что делает скрипт:
@@ -46,7 +46,7 @@ Set-CertbotInitialSetup -SshUser admin_user -SshHost vpn1.domain.com -SshPort 22
 
 Что делает скрипт:
 1. Получает текст, которую certbot ожидает увидеть на DNS-сервере у ТХТ-записи _acme-challenge.vpn1.domain.com.
-2. Сохраняет этот текст в файл, чтобы основной скрипт мог использовать его в будущем для обновления информации на DNS-сервере
+2. Сохраняет этот текст в файл, чтобы основной скрипт мог использовать его в будущем для обновления информации на DNS-сервере.
 
 ```bash
 Get-CertbotTxtRecord -FQDN vpn1.domain.com
@@ -57,7 +57,7 @@ Get-CertbotTxtRecord -FQDN vpn1.domain.com
 Скрипт генерации конфига для certbot
 
 Что делает скрипт:
-1. Создаёт конфиг для дальнейшей передачи его бинарнику certbot
+1. Создаёт конфиг для дальнейшей передачи его бинарнику certbot.
 
 У скрипта есть ряд параметров:
 
@@ -105,7 +105,7 @@ New-CertbotConfig -RouterOsHost $FQDN -RouterOsSshPort $SshPort
 ### Get-CertsExpire.py
 
 Что делает скрипт:
-1. Проходит по всем подпапкам в /etc/letsencrypt/live, смотрит ранее выданные сертификаты и проверяет дату их истечения
+1. Проходит по всем подпапкам в /etc/letsencrypt/live, смотрит ранее выданные сертификаты и проверяет дату их истечения.
 
 Вызывается так:
 ```bash
@@ -114,5 +114,10 @@ python ./Get-CertsExpire.py
 
 <!-- TODO Добавь аргументы для скрипта -->
 
-[TODO]
-Сделай возможность проверять отдельный сертификат и запускать главный скрипт для обновления сертификата. Добавь задачу в планировщик.
+### Update-Certificates.py
+
+Что делает скрипт:
+1. Проходит по всем подпапкам в /etc/letsencrypt/live, смотрит ранее выданные сертификаты и проверяет дату их истечения.
+2. Если сертификат протухнет через 20 дней, то запускается [основной скрипт](#основной-скрипт-update-lecertificateps1) для обновления сертификата.
+
+Можно добавить этот скрипт в crontab.
